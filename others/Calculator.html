@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Calculator</title>
+</head>
+<style>
+    
+    html{
+        user-select: none;
+        font-family: sans-serif;
+    }body{
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background: url(bgDark1.jpg) no-repeat;
+        background-size: cover;
+        background-position: center center;
+        overflow: hidden;
+        box-sizing: border-box;
+    }:focus{
+        outline: none;
+    }
+    
+    .input input{
+    scale: 1.10;
+        padding: 10px;
+        border: 2px solid white;
+        background: whitesmoke;
+        box-shadow: inset 0 0 5px black;
+        margin: 10px;
+        border-radius: 10px;
+        color: #252525;
+    }.input{
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+    }.input label{
+        color: lime;
+        text-align: center;
+        border: none;
+        width: 225px;
+        padding: 2px;
+        border-radius: 50px;
+        background: none;
+        overflow: hidden;
+        scale: 1.10;
+    }
+    
+    button{
+        width: 235px;
+        font-size: 1.15rem;
+        letter-spacing: 1px;
+        border-radius: 10px;
+        border: 2px solid white;
+        transition: .15s;
+    }button:hover, button:active{
+        scale: .95;
+        box-shadow: inset 0 0 5px black;
+    }
+    
+    .how{
+        border: none;
+        margin: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+        padding: 5px;
+        width: 215px;
+        text-align: center;
+        scale: 1.25;
+    }.how div button{
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        margin: 2px;
+        text-align: center;
+        font-size: 1em;
+    }.how .btn button{
+        width: 100%;
+        border-radius: 50px;
+    }.how .btn{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+     
+    
+</style>
+<body>
+    
+    <div class="input">
+    <input type="text" id="display" placeholder="Put a number to Calculate..." disabled>
+    <label id="result">Result will go here.</label>
+    </div>
+    
+    <div class="how">
+        
+        <div>
+            <button onclick="btn(1)">1</button>
+        <button onclick="btn(2)">2</button>
+        <button onclick="btn(3)">3</button>
+        <button onclick="btn(4)">4</button>
+        <button onclick="btn(5)">5</button>
+        </div>
+        
+        <div>
+            <button onclick="btn(6)">6</button>
+        <button onclick="btn(7)">7</button>
+        <button onclick="btn(8)">8</button>
+        <button onclick="btn(9)">9</button>
+        <button onclick="btn(0)">0</button>
+        </div>
+        
+        <div>
+            <button onclick="btn('+')">+</button>
+            <button onclick="btn('-')">-</button>
+            <button onclick="btn('/')">÷</button>
+            <button onclick="btn('*')">x</button>
+            <button onclick="btn('.')">.</button>
+        </div>
+        
+        <div class="btn">
+            <button onclick="clrBtn()" class="btnClr">Clr</button>
+            <button onclick="calcBtn()" class="btn Calc">=</button>
+            <button onclick="delBtn()" class="btnDel">Del</button>
+        </div>
+        
+    </div>
+    
+</body>
+<script>
+    
+    const display = document.getElementById("display");
+    const result = document.getElementById("result");
+    
+    function btn(value){
+        
+        display.value += value;
+        
+    }
+    
+    function calcBtn() {
+        
+        result.textContent = "result: " + eval(display.value);
+        
+    }
+    
+    function clrBtn() {
+        display.value = display.value.slice(0,  -999*999);
+    }
+    
+    function delBtn() {
+        display.value = display.value.slice(0, -1);
+    }
+    
+</script>
+</html>

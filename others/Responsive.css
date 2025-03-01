@@ -1,0 +1,21 @@
+@media(max-width: 721px){
+    
+    .nav-bar{
+        flex-direction: column;
+        height: auto;
+    }.nav-bar h1{
+        margin: 0;
+    }
+    
+    .home{
+        height: auto;
+    }.home .inner1 .p2{
+        -webkit-text-stroke: 1px white;
+    }
+    
+    .about{
+        height: auto;
+        padding: 10px;
+    }
+    
+}

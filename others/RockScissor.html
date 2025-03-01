@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url("bgDark1.jpg") no-repeat;
+      background-size: cover;
+      background-position: center center;
+      font-family: Arial, sans-serif;
+    }
+    #game {
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 15px;
+      color: white;
+      font-size: 1.5rem;
+    }
+    .choices {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .choice {
+      padding: 20px;
+      font-size: 1.5rem;
+      background-color: green;
+      border: 3px solid green;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .25s;
+    }
+    .choice:hover {
+      box-shadow: inset 0 0 10px black;
+      text-shadow: 0 0 5px yellow;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.25rem;
+      color: gold;
+      text-shadow: 0 0 5px gold;
+    }
+    #score {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: white;
+    }
+    #reset {
+      margin-top: 15px;
+      height: 40px;
+      width: 150px;
+      font-size: 1rem;
+      background-color: red;
+      color: white;
+      border: 3px solid red;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: .25s;
+    }
+    #reset:hover {
+      box-shadow: inset 0 0 10px black;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <h1>Rock Paper Scissors</h1>
+    <div class="choices">
+      <button class="choice" data-choice="✊">✊</button>
+      <button class="choice" data-choice="🖐️">🖐️</button>
+      <button class="choice" data-choice="✌️">✌️</button>
+    </div>
+    <div id="result">Make your choice!</div>
+    <div id="score">Score: Player 0 - 0 CPU</div>
+    <button id="reset">Reset Game</button>
+  </div>
+
+  <script>
+    const choices = document.querySelectorAll('.choice');
+    const resultText = document.getElementById('result');
+    const scoreText = document.getElementById('score');
+    const resetButton = document.getElementById('reset');
+
+    let playerScore = 0;
+    let cpuScore = 0;
+
+    const choicesArray = ['✊','🖐️','✌️'];
+
+    function determineWinner(playerChoice, cpuChoice) {
+      if (playerChoice === cpuChoice) {
+        return 'draw';
+      }
+      if (
+        (playerChoice === '✊' && cpuChoice === '✌️') ||
+        (playerChoice === '🖐️' && cpuChoice === '✊') ||
+        (playerChoice === '✌️' && cpuChoice === '🖐️')
+      ) {
+        return 'player';
+      }
+      return 'cpu';
+    }
+
+    function updateScore(winner) {
+      if (winner === 'player') {
+        playerScore++;
+      } else if (winner === 'cpu') {
+        cpuScore++;
+      }
+      scoreText.textContent = `Score: Player ${playerScore} - ${cpuScore} CPU`;
+    }
+
+    function displayResult(playerChoice, cpuChoice, winner) {
+      if (winner === 'draw') {
+        resultText.textContent = `It's a draw! You both chose ${playerChoice}`;
+      } else if (winner === 'player') {
+        resultText.textContent = `You win! ${playerChoice} beats ${cpuChoice}`;
+      } else {
+        resultText.textContent = `You lose! ${cpuChoice} beats ${playerChoice}`;
+      }
+    }
+
+    function handleChoice(event) {
+      const playerChoice = event.target.getAttribute('data-choice');
+      const cpuChoice = choicesArray[Math.floor(Math.random() * choicesArray.length)];
+      const winner = determineWinner(playerChoice, cpuChoice);
+
+      updateScore(winner);
+      displayResult(playerChoice, cpuChoice, winner);
+    }
+
+    function resetGame() {
+      playerScore = 0;
+      cpuScore = 0;
+      scoreText.textContent = `Score: Player ${playerScore} - ${cpuScore} CPU`;
+      resultText.textContent = 'Make your choice!';
+    }
+
+    choices.forEach(choice => choice.addEventListener('click', handleChoice));
+    resetButton.addEventListener('click', resetGame);
+  </script>
+</body>
+</html>

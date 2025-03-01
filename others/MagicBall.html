@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Magic Ball</title>
+</head>
+<style>
+    
+    html{
+        user-select: none;
+    }body{
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 25px;
+        min-height: 100vh;
+        overflow: hidden;
+        background: url("bgDark1.jpg") no-repeat;
+        background-position: center center;
+        background-size: cover;
+    }:focus{
+        outline: none;
+    }
+    
+    #result{
+        height: 350px;
+        width: 350px;
+        border-radius: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #151515;
+        transition: .5s;
+        font-size: 1.25rem;
+    }
+    
+    .input #display{
+        border: 2px solid whitesmoke;
+        border-radius: 50px;
+        padding: 10px;
+        box-shadow: inset 0 0 10px black;
+        background: lightgray;
+    }.input{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }.input button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50px;
+        border: none;
+        padding: 10px;
+        box-shadow: 0 0 10px black;
+    }.input button::after{
+        content: "";
+        position: absolute;
+        width: 70px;
+        height: 45px;
+        background: lightgray;
+        border-radius: 50px;
+        z-index: -1;
+    }.input button:hover{
+        box-shadow: inset 0 0 10px black;
+        color: #505050;
+    }
+    
+    h1{
+        color: white;
+        text-shadow: 0 0 10px white;
+        padding: 5px;
+        margin: 0;
+        width: 50%;
+        text-align: center;
+    }
+    
+</style>
+<body>
+    
+    <h1>MAGIC BALL</h1>
+    
+    <div id="result"></div>
+    
+    <div class="input">
+        <input type="text" id="display" placeholder="Ask a yes or no question...">
+        <button id="btn">Result</button>
+    </div>
+    
+</body>
+<script>
+    
+    const display = document.getElementById("display");
+    
+    const result = document.getElementById("result");
+    
+    const btn = document.getElementById("btn");
+    
+    btn.addEventListener('click', (e) => {
+        
+        let text = ["Yes", "No", "Can't answer that.",
+        "Definitely Yes!", "Definitely No.", "No chance at all.", "Probably Yes!"
+        ];
+        
+        let random = Math.floor(Math.random() * text.length);
+        
+        if(display.value){
+            result.style.opacity = 0;
+            
+            setTimeout(() => {
+                
+                result.style.background = "white";
+                result.style.color = "black";
+                result.style.opacity = 1;
+                result.textContent = text[random];
+                
+            }, 750);
+        
+        } else{
+            result.textContent = "Please put a valid question.";
+            result.style.background = "red";
+            result.style.color = "white";
+        }
+        
+    });
+    
+</script>
+</html>

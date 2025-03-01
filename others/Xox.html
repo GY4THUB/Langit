@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url("bgDark1.jpg") no-repeat;
+      background-size: cover;
+      background-position: center center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    
+    #game {
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      gap: 15px;
+    }
+    
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(255,255,255,0.10);
+      border: 3px solid white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px white;
+    }
+    
+    .cell.X {
+      color: red;
+      text-shadow: 0 0 10px red;
+    }
+    
+    .cell.O {
+      color: aqua;
+      text-shadow: 0 0 10px aqua;
+    }
+    
+    #status {
+      font-size: 1.5rem;
+      color: gold;
+      text-shadow: 0 0 5px gold;
+      margin-top: -5px;
+    }
+    
+    #mode-select {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+    }
+    
+    #mode-select button {
+      width: 150px;
+      height: 40px;
+      font-size: 1rem;
+      background-color: green;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      border: 3px solid green;
+      transition: .25s;
+    }
+    
+    #mode-select button:hover {
+      box-shadow: inset 0 0 10px black;
+    }
+    
+    #reset {
+    margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      height: 40px;
+      width: 150px;
+      transition: .25s;
+      border: 3px solid red;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #reset:hover {
+      box-shadow: inset 0 0 10px black;
+    }
+    
+    h1{
+        color: white;
+        padding: 0;
+        margin: 0;
+        text-shadow: 0 0 5px white;
+    }
+    
+    @media (max-width: 721px) {
+      .cell {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+      }
+      #board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <h1>Tic-Tac-Toe</h1>
+    <div id="mode-select">
+      <button onclick="startGame('player')">Player vs Player</button>
+      <button onclick="startGame('cpu')">Player vs CPU</button>
+    </div>
+    <div id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div id="status">Select a mode to start</div>
+    <button id="reset" onclick="resetGame()">Reset Game</button>
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('status');
+    const resetButton = document.getElementById('reset');
+
+    let currentPlayer = 'X';
+    let gameActive = false;
+    let gameState = ['', '', '', '', '', '', '', '', ''];
+    let mode = null; // 'player' or 'cpu'
+
+    const winningConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    function startGame(selectedMode) {
+      mode = selectedMode;
+      gameActive = true;
+      currentPlayer = 'X';
+      gameState = ['', '', '', '', '', '', '', '', ''];
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('X', 'O');
+      });
+    }
+
+    function handleCellClick(event) {
+      if (!gameActive) return;
+
+      const clickedCell = event.target;
+      const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+      if (gameState[clickedCellIndex] !== '') {
+        return;
+      }
+
+      gameState[clickedCellIndex] = currentPlayer;
+      clickedCell.textContent = currentPlayer;
+      clickedCell.classList.add(currentPlayer);
+
+      checkForWinner();
+
+      if (mode === 'cpu' && gameActive && currentPlayer === 'O') {
+        cpuMove();
+      }
+    }
+
+    function cpuMove() {
+      const bestMove = getBestMove();
+      gameState[bestMove] = 'O';
+      cells[bestMove].textContent = 'O';
+      cells[bestMove].classList.add('O');
+      checkForWinner();
+    }
+
+    function getBestMove() {
+      let bestScore = -Infinity;
+      let move;
+
+      for (let i = 0; i < gameState.length; i++) {
+        if (gameState[i] === '') {
+          gameState[i] = 'O';
+          let score = minimax(gameState, 0, false);
+          gameState[i] = '';
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      const result = checkWinner(board);
+      if (result !== null) {
+        return result;
+      }
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < board.length; i++) {
+          if (board[i] === '') {
+            board[i] = 'O';
+            let score = minimax(board, depth + 1, false);
+            board[i] = '';
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < board.length; i++) {
+          if (board[i] === '') {
+            board[i] = 'X';
+            let score = minimax(board, depth + 1, true);
+            board[i] = '';
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    function checkWinner(board) {
+      for (let i = 0; i < winningConditions.length; i++) {
+        const [a, b, c] = winningConditions[i];
+        if (board[a] !== '' && board[a] === board[b] && board[b] === board[c]) {
+          return board[a] === 'O' ? 1 : -1;
+        }
+      }
+      if (!board.includes('')) return 0; // Draw
+      return null; // Game not finished
+    }
+
+    function checkForWinner() {
+      const result = checkWinner(gameState);
+      if (result === 1) {
+        statusText.textContent = 'Player O Wins!';
+        gameActive = false;
+      } else if (result === -1) {
+        statusText.textContent = 'Player X Wins!';
+        gameActive = false;
+      } else if (result === 0) {
+        statusText.textContent = 'Draw!';
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusText.textContent = `Player ${currentPlayer}'s Turn`;
+      }
+    }
+
+    function resetGame() {
+      gameActive = false;
+      statusText.textContent = 'Select a mode to start';
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('X', 'O');
+      });
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+  </script>
+</body>
+</html>
